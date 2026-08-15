@@ -1,0 +1,1431 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Auto Help Car Accessories | Karol Bagh, Delhi</title>
+
+    <meta name="description"
+          content="Upgrade your car with premium accessories, sound systems, seat covers, LED lights, alloy wheels and complete car modification in Karol Bagh, Delhi. Get a free quote from Auto Help.">
+
+    <meta name="robots" content="index, follow">
+
+    <!-- Google Ads / Analytics can be added here later -->
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #0b0b0b;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .container {
+            width: min(1100px, 92%);
+            margin: auto;
+        }
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        header {
+            background: #080808;
+            border-bottom: 1px solid #222;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav {
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: 1px;
+        }
+
+        .logo span {
+            color: #ff3b30;
+        }
+
+        .nav-btn {
+            background: #25d366;
+            color: #fff;
+            padding: 11px 18px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        /* =========================
+           HERO
+        ========================= */
+
+        .hero {
+            padding: 75px 0 60px;
+            background:
+                radial-gradient(circle at top right, rgba(255, 59, 48, 0.18), transparent 35%),
+                linear-gradient(180deg, #111111, #080808);
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            align-items: center;
+            gap: 50px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(255, 59, 48, 0.12);
+            border: 1px solid rgba(255, 59, 48, 0.35);
+            color: #ff5b50;
+            padding: 7px 12px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 {
+            font-size: clamp(38px, 6vw, 68px);
+            line-height: 1.02;
+            font-weight: 900;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 span {
+            color: #ff3b30;
+        }
+
+        .hero p {
+            color: #bdbdbd;
+            font-size: 18px;
+            max-width: 620px;
+            margin-bottom: 28px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .primary-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #ff3b30;
+            color: white;
+            border: none;
+            padding: 15px 24px;
+            border-radius: 9px;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .primary-btn:hover {
+            transform: translateY(-2px);
+            background: #ff4c42;
+        }
+
+        .secondary-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #444;
+            padding: 15px 24px;
+            border-radius: 9px;
+            font-size: 16px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .hero-card {
+            background: #151515;
+            border: 1px solid #292929;
+            border-radius: 18px;
+            padding: 28px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .hero-card h3 {
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+
+        .hero-card p {
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .benefit {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            padding: 13px 0;
+            border-bottom: 1px solid #282828;
+        }
+
+        .benefit:last-child {
+            border-bottom: none;
+        }
+
+        .check {
+            width: 25px;
+            height: 25px;
+            flex-shrink: 0;
+            border-radius: 50%;
+            background: #25d366;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 13px;
+            font-weight: 900;
+        }
+
+        /* =========================
+           TRUST BAR
+        ========================= */
+
+        .trust-bar {
+            background: #151515;
+            border-top: 1px solid #222;
+            border-bottom: 1px solid #222;
+        }
+
+        .trust-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            text-align: center;
+        }
+
+        .trust-item {
+            padding: 24px 10px;
+            border-right: 1px solid #292929;
+        }
+
+        .trust-item:last-child {
+            border-right: none;
+        }
+
+        .trust-item strong {
+            display: block;
+            font-size: 17px;
+        }
+
+        .trust-item span {
+            color: #999;
+            font-size: 13px;
+        }
+
+        /* =========================
+           SERVICES
+        ========================= */
+
+        section {
+            padding: 75px 0;
+        }
+
+        .section-heading {
+            text-align: center;
+            margin-bottom: 42px;
+        }
+
+        .section-heading span {
+            color: #ff3b30;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 800;
+        }
+
+        .section-heading h2 {
+            font-size: clamp(30px, 4vw, 45px);
+            margin-top: 8px;
+        }
+
+        .section-heading p {
+            color: #999;
+            max-width: 600px;
+            margin: 10px auto 0;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .service {
+            background: #151515;
+            border: 1px solid #292929;
+            padding: 25px;
+            border-radius: 13px;
+            transition: 0.2s;
+        }
+
+        .service:hover {
+            transform: translateY(-4px);
+            border-color: #ff3b30;
+        }
+
+        .service-icon {
+            font-size: 30px;
+            margin-bottom: 12px;
+        }
+
+        .service h3 {
+            font-size: 18px;
+            margin-bottom: 7px;
+        }
+
+        .service p {
+            color: #999;
+            font-size: 14px;
+        }
+
+        /* =========================
+           FORM
+        ========================= */
+
+        .quote-section {
+            background: #111;
+        }
+
+        .quote-wrapper {
+            display: grid;
+            grid-template-columns: 0.85fr 1.15fr;
+            gap: 45px;
+            align-items: start;
+        }
+
+        .quote-info h2 {
+            font-size: clamp(32px, 5vw, 48px);
+            line-height: 1.1;
+            margin-bottom: 18px;
+        }
+
+        .quote-info h2 span {
+            color: #ff3b30;
+        }
+
+        .quote-info p {
+            color: #aaa;
+            margin-bottom: 25px;
+        }
+
+        .quote-point {
+            display: flex;
+            gap: 12px;
+            margin: 14px 0;
+            color: #ddd;
+        }
+
+        .form-card {
+            background: #171717;
+            border: 1px solid #2c2c2c;
+            border-radius: 18px;
+            padding: 30px;
+        }
+
+        .form-card h3 {
+            font-size: 24px;
+            margin-bottom: 6px;
+        }
+
+        .form-subtitle {
+            color: #999;
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 17px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 7px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .required {
+            color: #ff3b30;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            background: #0d0d0d;
+            color: #fff;
+            border: 1px solid #363636;
+            border-radius: 8px;
+            padding: 13px 14px;
+            font-size: 15px;
+            outline: none;
+            font-family: inherit;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #ff3b30;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .service-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .service-option {
+            position: relative;
+        }
+
+        .service-option input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .service-option label {
+            display: block;
+            background: #0d0d0d;
+            border: 1px solid #363636;
+            padding: 11px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #ccc;
+            transition: 0.2s;
+        }
+
+        .service-option input:checked + label {
+            border-color: #ff3b30;
+            background: rgba(255, 59, 48, 0.1);
+            color: #fff;
+        }
+
+        .submit-btn {
+            width: 100%;
+            margin-top: 5px;
+            padding: 16px;
+            border: none;
+            border-radius: 9px;
+            background: #25d366;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .submit-btn:hover {
+            background: #20bd5b;
+            transform: translateY(-2px);
+        }
+
+        .privacy {
+            color: #777;
+            font-size: 11px;
+            text-align: center;
+            margin-top: 12px;
+        }
+
+        /* =========================
+           LOCATION
+        ========================= */
+
+        .location {
+            text-align: center;
+        }
+
+        .location-box {
+            max-width: 700px;
+            margin: auto;
+            background: #151515;
+            border: 1px solid #292929;
+            padding: 35px;
+            border-radius: 16px;
+        }
+
+        .location-box h3 {
+            margin-bottom: 10px;
+        }
+
+        .location-box p {
+            color: #aaa;
+        }
+
+        .call-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 13px 22px;
+            border: 1px solid #444;
+            border-radius: 8px;
+            font-weight: 700;
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        footer {
+            background: #070707;
+            border-top: 1px solid #222;
+            padding: 30px 0;
+            text-align: center;
+            color: #777;
+            font-size: 13px;
+        }
+
+        /* =========================
+           FLOATING WHATSAPP
+        ========================= */
+
+        .whatsapp-float {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            background: #25d366;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 27px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+            z-index: 2000;
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 850px) {
+
+            .hero-grid,
+            .quote-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .hero {
+                padding-top: 50px;
+            }
+
+            .hero-card {
+                margin-top: 10px;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            .nav {
+                min-height: 60px;
+            }
+
+            .logo {
+                font-size: 20px;
+            }
+
+            .nav-btn {
+                padding: 9px 12px;
+                font-size: 12px;
+            }
+
+            .hero {
+                padding: 45px 0;
+            }
+
+            .hero p {
+                font-size: 16px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .primary-btn,
+            .secondary-btn {
+                width: 100%;
+            }
+
+            .trust-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .trust-item {
+                border-right: none;
+                border-bottom: 1px solid #292929;
+            }
+
+            .trust-item:last-child {
+                border-bottom: none;
+            }
+
+            section {
+                padding: 55px 0;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .service-options {
+                grid-template-columns: 1fr;
+            }
+
+            .form-card {
+                padding: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- =========================
+     HEADER
+========================= -->
+
+<header>
+    <div class="container nav">
+
+        <div class="logo">
+            AUTO <span>HELP</span>
+        </div>
+
+        <a class="nav-btn"
+           href="tel:+919315680672">
+            Call Now
+        </a>
+
+    </div>
+</header>
+
+
+<!-- =========================
+     HERO
+========================= -->
+
+<section class="hero">
+
+    <div class="container hero-grid">
+
+        <div>
+
+            <div class="badge">
+                KAROL BAGH • DELHI
+            </div>
+
+            <h1>
+                Upgrade Your Car.<br>
+                <span>Make It Yours.</span>
+            </h1>
+
+            <p>
+                Premium car accessories, sound systems, seat covers,
+                LED lights, alloy wheels and complete car modifications
+                tailored to your car.
+            </p>
+
+            <div class="hero-buttons">
+
+                <a href="#quote"
+                   class="primary-btn">
+                    Get Free Quote
+                </a>
+
+                <a href="tel:+919315680672"
+                   class="secondary-btn">
+                    📞 Call Auto Help
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div class="hero-card">
+
+            <h3>
+                Why Choose Auto Help?
+            </h3>
+
+            <p>
+                Tell us what you want for your car and our team
+                will help you choose the right setup.
+            </p>
+
+            <div class="benefit">
+                <div class="check">✓</div>
+                <div>
+                    <strong>Wide Range of Accessories</strong><br>
+                    <span style="color:#999;font-size:13px;">
+                        From interiors to performance styling.
+                    </span>
+                </div>
+            </div>
+
+            <div class="benefit">
+                <div class="check">✓</div>
+                <div>
+                    <strong>Car-Specific Solutions</strong><br>
+                    <span style="color:#999;font-size:13px;">
+                        Accessories selected for your vehicle.
+                    </span>
+                </div>
+            </div>
+
+            <div class="benefit">
+                <div class="check">✓</div>
+                <div>
+                    <strong>Free Quote</strong><br>
+                    <span style="color:#999;font-size:13px;">
+                        Submit your requirement and enquire directly.
+                    </span>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     TRUST BAR
+========================= -->
+
+<div class="trust-bar">
+
+    <div class="container trust-grid">
+
+        <div class="trust-item">
+            <strong>Car Accessories</strong>
+            <span>Interior & Exterior</span>
+        </div>
+
+        <div class="trust-item">
+            <strong>Car Modification</strong>
+            <span>Custom Styling</span>
+        </div>
+
+        <div class="trust-item">
+            <strong>Karol Bagh</strong>
+            <span>Delhi</span>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     SERVICES
+========================= -->
+
+<section>
+
+    <div class="container">
+
+        <div class="section-heading">
+
+            <span>OUR SERVICES</span>
+
+            <h2>
+                Everything Your Car Needs
+            </h2>
+
+            <p>
+                Choose the service you're interested in and
+                request a quote from Auto Help.
+            </p>
+
+        </div>
+
+
+        <div class="services-grid">
+
+            <div class="service">
+                <div class="service-icon">🔊</div>
+                <h3>Heavy Sound System</h3>
+                <p>
+                    Upgrade your car audio experience with
+                    powerful sound setups.
+                </p>
+            </div>
+
+            <div class="service">
+                <div class="service-icon">💺</div>
+                <h3>Seat Covers</h3>
+                <p>
+                    Give your interior a fresh and personalised look.
+                </p>
+            </div>
+
+            <div class="service">
+                <div class="service-icon">🚗</div>
+                <h3>Car Accessories</h3>
+                <p>
+                    Practical and stylish accessories for your vehicle.
+                </p>
+            </div>
+
+            <div class="service">
+                <div class="service-icon">✨</div>
+                <h3>Interior Modification</h3>
+                <p>
+                    Upgrade and customise your car interior.
+                </p>
+            </div>
+
+            <div class="service">
+                <div class="service-icon">💡</div>
+                <h3>LED Lights</h3>
+                <p>
+                    Improve your vehicle's lighting and appearance.
+                </p>
+            </div>
+
+            <div class="service">
+                <div class="service-icon">⚙️</div>
+                <h3>Alloy Wheels</h3>
+                <p>
+                    Give your car a sportier and premium appearance.
+                </p>
+            </div>
+
+            <div class="service">
+                <div class="service-icon">🔥</div>
+                <h3>Complete Car Modification</h3>
+                <p>
+                    Create a customised look for your vehicle.
+                </p>
+            </div>
+
+            <div class="service">
+                <div class="service-icon">🛠️</div>
+                <h3>Exterior Modification</h3>
+                <p>
+                    Enhance the exterior styling of your car.
+                </p>
+            </div>
+
+            <div class="service">
+                <div class="service-icon">🎯</div>
+                <h3>Custom Requirements</h3>
+                <p>
+                    Have something specific in mind? Tell us.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     QUOTE FORM
+========================= -->
+
+<section class="quote-section"
+         id="quote">
+
+    <div class="container quote-wrapper">
+
+
+        <div class="quote-info">
+
+            <div class="badge">
+                FREE ENQUIRY
+            </div>
+
+            <h2>
+                Tell Us What You Want.
+                <span>We'll Help.</span>
+            </h2>
+
+            <p>
+                Fill in your details and your enquiry will open
+                directly in WhatsApp with Auto Help.
+            </p>
+
+            <div class="quote-point">
+                <span>✓</span>
+                <span>No complicated process</span>
+            </div>
+
+            <div class="quote-point">
+                <span>✓</span>
+                <span>Tell us your car model and requirement</span>
+            </div>
+
+            <div class="quote-point">
+                <span>✓</span>
+                <span>Direct WhatsApp enquiry</span>
+            </div>
+
+        </div>
+
+
+        <div class="form-card">
+
+            <h3>
+                Get Your Free Quote
+            </h3>
+
+            <p class="form-subtitle">
+                Enter your details below.
+            </p>
+
+
+            <form id="leadForm">
+
+
+                <!-- NAME -->
+
+                <div class="form-group">
+
+                    <label for="name">
+                        Your Name <span class="required">*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        placeholder="Enter your name"
+                        required>
+
+                </div>
+
+
+                <!-- PHONE -->
+
+                <div class="form-group">
+
+                    <label for="phone">
+                        Mobile Number <span class="required">*</span>
+                    </label>
+
+                    <input
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        placeholder="10-digit mobile number"
+                        pattern="[6-9][0-9]{9}"
+                        maxlength="10"
+                        required>
+
+                </div>
+
+
+                <!-- CAR -->
+
+                <div class="form-group">
+
+                    <label for="car">
+                        Car Make & Model <span class="required">*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="car"
+                        name="car"
+                        placeholder="e.g. Hyundai Creta"
+                        required>
+
+                </div>
+
+
+                <!-- SERVICES -->
+
+                <div class="form-group">
+
+                    <label>
+                        What are you interested in?
+                        <span class="required">*</span>
+                    </label>
+
+                    <div class="service-options">
+
+
+                        <div class="service-option">
+
+                            <input
+                                type="checkbox"
+                                id="sound"
+                                name="services"
+                                value="Heavy Sound System">
+
+                            <label for="sound">
+                                🔊 Heavy Sound System
+                            </label>
+
+                        </div>
+
+
+                        <div class="service-option">
+
+                            <input
+                                type="checkbox"
+                                id="seats"
+                                name="services"
+                                value="Seat Covers">
+
+                            <label for="seats">
+                                💺 Seat Covers
+                            </label>
+
+                        </div>
+
+
+                        <div class="service-option">
+
+                            <input
+                                type="checkbox"
+                                id="accessories"
+                                name="services"
+                                value="Car Accessories">
+
+                            <label for="accessories">
+                                🚗 Car Accessories
+                            </label>
+
+                        </div>
+
+
+                        <div class="service-option">
+
+                            <input
+                                type="checkbox"
+                                id="interior"
+                                name="services"
+                                value="Interior Modification">
+
+                            <label for="interior">
+                                ✨ Interior Modification
+                            </label>
+
+                        </div>
+
+
+                        <div class="service-option">
+
+                            <input
+                                type="checkbox"
+                                id="led"
+                                name="services"
+                                value="LED Lights">
+
+                            <label for="led">
+                                💡 LED Lights
+                            </label>
+
+                        </div>
+
+
+                        <div class="service-option">
+
+                            <input
+                                type="checkbox"
+                                id="alloy"
+                                name="services"
+                                value="Alloy Wheels">
+
+                            <label for="alloy">
+                                ⚙️ Alloy Wheels
+                            </label>
+
+                        </div>
+
+
+                        <div class="service-option">
+
+                            <input
+                                type="checkbox"
+                                id="complete"
+                                name="services"
+                                value="Complete Car Modification">
+
+                            <label for="complete">
+                                🔥 Complete Modification
+                            </label>
+
+                        </div>
+
+
+                        <div class="service-option">
+
+                            <input
+                                type="checkbox"
+                                id="other"
+                                name="services"
+                                value="Other">
+
+                            <label for="other">
+                                🎯 Other Requirement
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- MESSAGE -->
+
+                <div class="form-group">
+
+                    <label for="message">
+                        Tell us what you need
+                    </label>
+
+                    <textarea
+                        id="message"
+                        name="message"
+                        placeholder="Example: I want seat covers and a sound system. Please share available options and prices."></textarea>
+
+                </div>
+
+
+                <!-- SUBMIT -->
+
+                <button
+                    type="submit"
+                    class="submit-btn">
+
+                    💬 Send Enquiry on WhatsApp
+
+                </button>
+
+
+                <p class="privacy">
+                    Your information is used only to respond to your enquiry.
+                </p>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     LOCATION
+========================= -->
+
+<section class="location">
+
+    <div class="container">
+
+        <div class="section-heading">
+
+            <span>VISIT US</span>
+
+            <h2>
+                Auto Help Car Accessories
+            </h2>
+
+        </div>
+
+        <div class="location-box">
+
+            <h3>
+                📍 Karol Bagh, New Delhi
+            </h3>
+
+            <p>
+                Shop No. 5, Ground Floor, 59/21,
+                New Rohtak Road, near Liberty Cinema,
+                Karol Bagh, New Delhi - 110005
+            </p>
+
+            <a
+                href="tel:+919315680672"
+                class="call-btn">
+
+                📞 +91 93156 80672
+
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     FOOTER
+========================= -->
+
+<footer>
+
+    <div class="container">
+
+        <p>
+            © <span id="year"></span> Auto Help Car Accessories.
+            All rights reserved.
+        </p>
+
+    </div>
+
+</footer>
+
+
+<!-- =========================
+     FLOATING WHATSAPP
+========================= -->
+
+<a
+    class="whatsapp-float"
+    href="https://wa.me/919315680672"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Chat with Auto Help on WhatsApp">
+
+    💬
+
+</a>
+
+
+<!-- =========================
+     JAVASCRIPT
+========================= -->
+
+<script>
+
+    /* =========================
+       CURRENT YEAR
+    ========================= */
+
+    document.getElementById("year").textContent =
+        new Date().getFullYear();
+
+
+    /* =========================
+       GOOGLE ADS PARAMETERS
+    ========================= */
+
+    const urlParams = new URLSearchParams(window.location.search);
+
+    const trackingData = {
+
+        gclid:
+            urlParams.get("gclid") || "",
+
+        utm_source:
+            urlParams.get("utm_source") || "",
+
+        utm_medium:
+            urlParams.get("utm_medium") || "",
+
+        utm_campaign:
+            urlParams.get("utm_campaign") || "",
+
+        utm_term:
+            urlParams.get("utm_term") || "",
+
+        utm_content:
+            urlParams.get("utm_content") || ""
+
+    };
+
+
+    /* =========================
+       FORM SUBMISSION
+    ========================= */
+
+    document
+        .getElementById("leadForm")
+        .addEventListener("submit", function (event) {
+
+            event.preventDefault();
+
+
+            /* Get customer information */
+
+            const name =
+                document.getElementById("name")
+                .value
+                .trim();
+
+            const phone =
+                document.getElementById("phone")
+                .value
+                .trim();
+
+            const car =
+                document.getElementById("car")
+                .value
+                .trim();
+
+            const message =
+                document.getElementById("message")
+                .value
+                .trim();
+
+
+            /* Get selected services */
+
+            const selectedServices =
+                Array.from(
+                    document.querySelectorAll(
+                        'input[name="services"]:checked'
+                    )
+                )
+                .map(function (checkbox) {
+                    return checkbox.value;
+                });
+
+
+            /* Require at least one service */
+
+            if (selectedServices.length === 0) {
+
+                alert(
+                    "Please select at least one service."
+                );
+
+                return;
+
+            }
+
+
+            /* Create WhatsApp message */
+
+            let whatsappMessage =
+`🚗 NEW ENQUIRY
+
+Hello Auto Help,
+
+I am interested in your car accessories/services.
+
+👤 Name: ${name}
+
+📱 Phone: ${phone}
+
+🚘 Car: ${car}
+
+🛠️ Interested In:
+${selectedServices.map(service => "• " + service).join("\n")}
+
+📝 Requirement:
+${message || "Not specified"}
+
+`;
+
+
+
+            /* Add Google Ads tracking */
+
+            if (
+                trackingData.gclid ||
+                trackingData.utm_campaign ||
+                trackingData.utm_term
+            ) {
+
+                whatsappMessage +=
+`
+📊 Lead Source
+
+Source: ${trackingData.utm_source || "Google Ads"}
+Medium: ${trackingData.utm_medium || "CPC"}
+Campaign: ${trackingData.utm_campaign || "Not available"}
+Keyword: ${trackingData.utm_term || "Not available"}
+GCLID: ${trackingData.gclid || "Not available"}
+`;
+
+            } else {
+
+                whatsappMessage +=
+`
+📊 Lead Source: Website
+`;
+
+            }
+
+
+            /* WhatsApp number */
+
+            const whatsappNumber =
+                "919315680672";
+
+
+            /* Encode message */
+
+            const encodedMessage =
+                encodeURIComponent(
+                    whatsappMessage
+                );
+
+
+            /* Create WhatsApp URL */
+
+            const whatsappURL =
+                `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+
+
+            /* Open WhatsApp */
+
+            window.open(
+                whatsappURL,
+                "_blank"
+            );
+
+        });
+
+</script>
+
+</body>
+</html>
+```
