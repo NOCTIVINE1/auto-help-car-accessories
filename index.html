@@ -207,6 +207,7 @@ main{padding:48px 0 55px}.main-grid{display:grid;grid-template-columns:minmax(0,
                     id="leadForm"
                     novalidate
                 >
+                    <input type="hidden" id="leadId" name="leadId" value="">
 
 
                     <!-- =========================================
@@ -749,6 +750,104 @@ main{padding:48px 0 55px}.main-grid{display:grid;grid-template-columns:minmax(0,
     const whatsappNumber =
         "919315680672";
 
+    /* Google Apps Script Web App */
+    const LEAD_API_URL =
+        "https://script.google.com/macros/s/AKfycbw5XzYcWbCzQRCMWluqkbvUR-u3MQ-FehwdNOg9lGswXrFdvr-7LnPXM1fNxd1QL9u_/exec";
+
+    /* Create one Lead ID for this browser session. */
+    function createLeadId() {
+
+        const date = new Date()
+            .toISOString()
+            .slice(0, 10)
+            .replace(/-/g, "");
+
+        let randomPart;
+
+        if (
+            window.crypto &&
+            typeof crypto.randomUUID === "function"
+        ) {
+            randomPart = crypto.randomUUID()
+                .replace(/-/g, "")
+                .substring(0, 8)
+                .toUpperCase();
+        } else {
+            randomPart = Math.random()
+                .toString(36)
+                .substring(2, 10)
+                .toUpperCase();
+        }
+
+        return "AUTO-" + date + "-" + randomPart;
+    }
+
+    function getLeadId() {
+
+        try {
+
+            let id =
+                sessionStorage.getItem("autohelp_lead_id");
+
+            if (!id) {
+                id = createLeadId();
+
+                sessionStorage.setItem(
+                    "autohelp_lead_id",
+                    id
+                );
+            }
+
+            return id;
+
+        } catch (error) {
+
+            return createLeadId();
+
+        }
+    }
+
+    const leadId = getLeadId();
+
+    document.getElementById("leadId").value = leadId;
+
+    /* Form-start time is stored locally only until submission. */
+    let formStartedAt = null;
+
+    try {
+        formStartedAt =
+            sessionStorage.getItem("autohelp_form_started");
+    } catch (error) {
+        formStartedAt = null;
+    }
+
+    function markFormStarted() {
+
+        if (formStartedAt) {
+            return;
+        }
+
+        formStartedAt = new Date().toISOString();
+
+        try {
+            sessionStorage.setItem(
+                "autohelp_form_started",
+                formStartedAt
+            );
+        } catch (error) {
+            console.log("Session storage unavailable.");
+        }
+
+        if (typeof gtag === "function") {
+
+            gtag("event", "form_start", {
+                lead_id: leadId,
+                page_location: window.location.href
+            });
+
+        }
+    }
+
 
 
     /* =========================================================
@@ -821,6 +920,26 @@ main{padding:48px 0 55px}.main-grid{display:grid;grid-template-columns:minmax(0,
 
 
     /* =========================================================
+       FORM START DETECTION
+    ========================================================== */
+
+    document
+        .getElementById("leadForm")
+        .querySelectorAll("input, textarea")
+        .forEach(
+            function (element) {
+
+                element.addEventListener(
+                    "focus",
+                    markFormStarted,
+                    { once: true }
+                );
+
+            }
+        );
+
+
+    /* =========================================================
        FORM
     ========================================================== */
 
@@ -831,6 +950,8 @@ main{padding:48px 0 55px}.main-grid{display:grid;grid-template-columns:minmax(0,
             function (event) {
 
                 event.preventDefault();
+
+                markFormStarted();
 
 
                 /* =============================================
@@ -970,6 +1091,201 @@ main{padding:48px 0 55px}.main-grid{display:grid;grid-template-columns:minmax(0,
                 }
 
 
+                /* =============================================
+                   BUILD LEAD DATA FOR GOOGLE SHEETS
+                ============================================== */
+
+                let storedTracking = {};
+
+                try {
+
+                    storedTracking =
+                        JSON.parse(
+                            localStorage.getItem(
+                                "autohelp_tracking"
+                            ) || "{}"
+                        );
+
+                } catch (error) {
+
+                    storedTracking = {};
+
+                }
+
+                const sourceValue =
+                    (storedTracking.utm_source || "")
+                        .toLowerCase();
+
+                let leadSource = "Direct";
+
+                if (
+                    storedTracking.gclid ||
+                    sourceValue.includes("google")
+                ) {
+
+                    leadSource = "Google Ads";
+
+                } else if (
+                    sourceValue.includes("facebook") ||
+                    sourceValue.includes("instagram") ||
+                    sourceValue.includes("meta")
+                ) {
+
+                    leadSource = "Meta Ads";
+
+                } else if (storedTracking.utm_source) {
+
+                    leadSource =
+                        storedTracking.utm_source;
+
+                }
+
+
+                const leadData = {
+
+                    leadId: leadId,
+
+                    timestamp:
+                        new Date().toISOString(),
+
+                    name: name,
+
+                    phone: phone,
+
+                    city: city,
+
+                    carModel: "",
+
+                    services:
+                        services.join(", "),
+
+                    package: "",
+
+                    additionalDetails:
+                        message,
+
+                    contactPreference:
+                        "WhatsApp",
+
+                    source:
+                        leadSource,
+
+                    campaign:
+                        storedTracking.utm_campaign || "",
+
+                    adCreative:
+                        storedTracking.utm_content || "",
+
+                    gclid:
+                        storedTracking.gclid || "",
+
+                    landingPage:
+                        storedTracking.landingPage ||
+                        window.location.href,
+
+                    formStarted:
+                        formStartedAt ||
+                        new Date().toISOString(),
+
+                    formSubmitted:
+                        "Yes",
+
+                    whatsappOpened:
+                        "Yes",
+
+                    callClicked:
+                        "No",
+
+                    locationClicked:
+                        "No"
+
+                };
+
+
+                /* =============================================
+                   SEND LEAD TO GOOGLE SHEET
+
+                   text/plain avoids a browser CORS preflight.
+                   Apps Script reads the JSON body from
+                   e.postData.contents.
+                ============================================== */
+
+                try {
+
+                    fetch(
+                        LEAD_API_URL,
+                        {
+                            method: "POST",
+                            mode: "no-cors",
+                            headers: {
+                                "Content-Type":
+                                    "text/plain;charset=utf-8"
+                            },
+                            body:
+                                JSON.stringify(leadData),
+                            keepalive: true
+                        }
+                    ).catch(
+                        function (error) {
+
+                            console.error(
+                                "Google Sheet submission failed:",
+                                error
+                            );
+
+                        }
+                    );
+
+                } catch (error) {
+
+                    console.error(
+                        "Google Sheet submission failed:",
+                        error
+                    );
+
+                }
+
+
+                /* =============================================
+                   GOOGLE ANALYTICS — PRIMARY LEAD
+                ============================================== */
+
+                if (typeof gtag === "function") {
+
+                    gtag(
+                        "event",
+                        "form_submit",
+                        {
+                            lead_id:
+                                leadId,
+
+                            lead_source:
+                                leadSource,
+
+                            campaign:
+                                storedTracking.utm_campaign || "",
+
+                            page_location:
+                                window.location.href
+                        }
+                    );
+
+                    gtag(
+                        "event",
+                        "generate_lead",
+                        {
+                            lead_id:
+                                leadId,
+
+                            value: 1,
+
+                            currency: "INR"
+                        }
+                    );
+
+                }
+
+
 
                 /* =============================================
                    WHATSAPP MESSAGE
@@ -979,6 +1295,8 @@ main{padding:48px 0 55px}.main-grid{display:grid;grid-template-columns:minmax(0,
 `Hello Auto Help,
 
 I would like to enquire about your services.
+
+Enquiry ID: ${leadId}
 
 Name: ${name}
 Phone: ${phone}
@@ -1040,6 +1358,10 @@ ${message || "Not specified"}`;
 
                 trackAction(
                     "lead_whatsapp"
+                );
+
+                trackAction(
+                    "whatsapp_opened"
                 );
 
 
