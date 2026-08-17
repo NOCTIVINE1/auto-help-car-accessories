@@ -716,8 +716,10 @@ main{padding:48px 0 55px}.main-grid{display:grid;grid-template-columns:minmax(0,
             urlParams.get("utm_term") || "",
 
         utm_content:
-            urlParams.get("utm_content") || ""
+            urlParams.get("utm_content") || "",
 
+        landingPage:
+            window.location.href
     };
 
 
@@ -940,7 +942,228 @@ main{padding:48px 0 55px}.main-grid{display:grid;grid-template-columns:minmax(0,
 
 
     /* =========================================================
-       FORM
+       LEAD TRACKING / GOOGLE SHEETS
+       ---------------------------------------------------------
+       Partial lead capture:
+       - A Lead ID is created when the visitor opens the page.
+       - Data is sent when the visitor enters a valid mobile number
+         or changes the form.
+       - The same Lead ID is reused for the final submission.
+       - The Apps Script backend must UPSERT by leadId.
+    ========================================================== */
+
+    let partialSaveTimer = null;
+    let lastSentFingerprint = "";
+
+    function getStoredTracking() {
+        try {
+            return JSON.parse(
+                localStorage.getItem("autohelp_tracking") || "{}"
+            );
+        } catch (error) {
+            return {};
+        }
+    }
+
+    function getFormData(status) {
+        const storedTracking = getStoredTracking();
+
+        const name = document.getElementById("name").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+        const city = document.getElementById("city").value.trim();
+        const message = document.getElementById("message").value.trim();
+
+        const services = Array.from(
+            document.querySelectorAll('input[name="services"]:checked')
+        ).map(function (checkbox) {
+            return checkbox.value;
+        });
+
+        const sourceValue =
+            (storedTracking.utm_source || "").toLowerCase();
+
+        let leadSource = "Direct";
+
+        if (
+            storedTracking.gclid ||
+            sourceValue.includes("google")
+        ) {
+            leadSource = "Google Ads";
+        } else if (
+            sourceValue.includes("facebook") ||
+            sourceValue.includes("instagram") ||
+            sourceValue.includes("meta")
+        ) {
+            leadSource = "Meta Ads";
+        } else if (storedTracking.utm_source) {
+            leadSource = storedTracking.utm_source;
+        }
+
+        return {
+            leadId: leadId,
+            timestamp: new Date().toISOString(),
+
+            name: name,
+            phone: phone,
+            city: city,
+
+            carModel: "",
+            services: services.join(", "),
+            package: "",
+            additionalDetails: message,
+
+            contactPreference: "WhatsApp",
+            source: leadSource,
+            campaign: storedTracking.utm_campaign || "",
+            adCreative: storedTracking.utm_content || "",
+
+            gclid: storedTracking.gclid || "",
+            wbraid: storedTracking.wbraid || "",
+            gbraid: storedTracking.gbraid || "",
+
+            landingPage:
+                storedTracking.landingPage ||
+                window.location.href,
+
+            formStarted:
+                formStartedAt ||
+                new Date().toISOString(),
+
+            formSubmitted:
+                status === "Submitted" ? "Yes" : "No",
+
+            leadStatus: status,
+
+            whatsappOpened:
+                status === "Submitted" ? "Yes" : "No",
+
+            callClicked: "No",
+            locationClicked: "No"
+        };
+    }
+
+    function sendLeadToSheet(status, force) {
+        const data = getFormData(status);
+
+        /*
+         * Do not create useless empty rows.
+         * A partial lead is saved only after at least one useful
+         * piece of customer information exists.
+         */
+        if (
+            !data.phone &&
+            !data.name &&
+            !data.city &&
+            !data.services &&
+            !data.additionalDetails
+        ) {
+            return;
+        }
+
+        /*
+         * For partial leads, wait until the phone number is complete.
+         * This means entering only a few digits won't create a row.
+         */
+        if (
+            status === "Partial" &&
+            data.phone &&
+            !/^[6-9][0-9]{9}$/.test(data.phone)
+        ) {
+            return;
+        }
+
+        const fingerprint = JSON.stringify({
+            leadId: data.leadId,
+            name: data.name,
+            phone: data.phone,
+            city: data.city,
+            services: data.services,
+            additionalDetails: data.additionalDetails,
+            leadStatus: data.leadStatus
+        });
+
+        if (!force && fingerprint === lastSentFingerprint) {
+            return;
+        }
+
+        lastSentFingerprint = fingerprint;
+
+        try {
+            fetch(
+                LEAD_API_URL,
+                {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: {
+                        "Content-Type":
+                            "text/plain;charset=utf-8"
+                    },
+                    body: JSON.stringify(data),
+                    keepalive: true
+                }
+            ).catch(function (error) {
+                console.error(
+                    "Google Sheet submission failed:",
+                    error
+                );
+            });
+        } catch (error) {
+            console.error(
+                "Google Sheet submission failed:",
+                error
+            );
+        }
+    }
+
+    function schedulePartialLeadSave() {
+        clearTimeout(partialSaveTimer);
+
+        partialSaveTimer = setTimeout(function () {
+            sendLeadToSheet("Partial", false);
+        }, 800);
+    }
+
+    /*
+     * Save the lead as soon as a valid 10-digit mobile number
+     * has been entered.
+     */
+    document
+        .getElementById("phone")
+        .addEventListener("input", function () {
+            this.value = this.value
+                .replace(/[^0-9]/g, "")
+                .slice(0, 10);
+
+            markFormStarted();
+
+            if (/^[6-9][0-9]{9}$/.test(this.value)) {
+                sendLeadToSheet("Partial", true);
+            }
+        });
+
+    /*
+     * Save changes to the same lead while the visitor continues
+     * filling the form.
+     */
+    document
+        .getElementById("leadForm")
+        .querySelectorAll("input:not(#leadId), textarea")
+        .forEach(function (element) {
+
+            element.addEventListener("input", function () {
+                markFormStarted();
+                schedulePartialLeadSave();
+            });
+
+            element.addEventListener("change", function () {
+                markFormStarted();
+                schedulePartialLeadSave();
+            });
+        });
+
+
+    /* =========================================================
+       FINAL FORM SUBMISSION
     ========================================================== */
 
     document
@@ -953,17 +1176,11 @@ main{padding:48px 0 55px}.main-grid{display:grid;grid-template-columns:minmax(0,
 
                 markFormStarted();
 
-
-                /* =============================================
-                   GET FORM VALUES
-                ============================================== */
-
                 const name =
                     document
                         .getElementById("name")
                         .value
                         .trim();
-
 
                 const phone =
                     document
@@ -971,13 +1188,11 @@ main{padding:48px 0 55px}.main-grid{display:grid;grid-template-columns:minmax(0,
                         .value
                         .trim();
 
-
                 const city =
                     document
                         .getElementById("city")
                         .value
                         .trim();
-
 
                 const message =
                     document
@@ -985,136 +1200,51 @@ main{padding:48px 0 55px}.main-grid{display:grid;grid-template-columns:minmax(0,
                         .value
                         .trim();
 
-
-
-                /* =============================================
-                   VALIDATE NAME
-                ============================================== */
-
-                if (
-                    name.length < 2
-                ) {
-
-                    alert(
-                        "Please enter your name."
-                    );
-
-                    document
-                        .getElementById("name")
-                        .focus();
-
+                if (name.length < 2) {
+                    alert("Please enter your name.");
+                    document.getElementById("name").focus();
                     return;
-
                 }
 
-
-
-                /* =============================================
-                   VALIDATE PHONE
-                ============================================== */
-
-                if (
-                    !/^[6-9][0-9]{9}$/.test(
-                        phone
-                    )
-                ) {
-
+                if (!/^[6-9][0-9]{9}$/.test(phone)) {
                     alert(
                         "Please enter a valid 10-digit mobile number."
                     );
-
-                    document
-                        .getElementById("phone")
-                        .focus();
-
+                    document.getElementById("phone").focus();
                     return;
-
                 }
 
-
-
-                /* =============================================
-                   VALIDATE CITY
-                ============================================== */
-
-                if (
-                    city.length < 2
-                ) {
-
-                    alert(
-                        "Please enter your city."
-                    );
-
-                    document
-                        .getElementById("city")
-                        .focus();
-
+                if (city.length < 2) {
+                    alert("Please enter your city.");
+                    document.getElementById("city").focus();
                     return;
-
                 }
 
+                const services = Array.from(
+                    document.querySelectorAll(
+                        'input[name="services"]:checked'
+                    )
+                ).map(function (checkbox) {
+                    return checkbox.value;
+                });
 
-
-                /* =============================================
-                   SELECTED SERVICES
-                ============================================== */
-
-                const services =
-                    Array.from(
-                        document.querySelectorAll(
-                            'input[name="services"]:checked'
-                        )
-                    ).map(
-                        function (checkbox) {
-
-                            return checkbox.value;
-
-                        }
-                    );
-
-
-
-                /* =============================================
-                   VALIDATE SERVICES
-                ============================================== */
-
-                if (
-                    services.length === 0
-                ) {
-
+                if (services.length === 0) {
                     alert(
                         "Please select at least one service."
                     );
-
                     return;
-
                 }
 
+                /*
+                 * FINAL SAVE — same Lead ID, so the Apps Script
+                 * backend should update the existing partial row.
+                 */
+                sendLeadToSheet("Submitted", true);
 
-                /* =============================================
-                   BUILD LEAD DATA FOR GOOGLE SHEETS
-                ============================================== */
-
-                let storedTracking = {};
-
-                try {
-
-                    storedTracking =
-                        JSON.parse(
-                            localStorage.getItem(
-                                "autohelp_tracking"
-                            ) || "{}"
-                        );
-
-                } catch (error) {
-
-                    storedTracking = {};
-
-                }
+                const storedTracking = getStoredTracking();
 
                 const sourceValue =
-                    (storedTracking.utm_source || "")
-                        .toLowerCase();
+                    (storedTracking.utm_source || "").toLowerCase();
 
                 let leadSource = "Direct";
 
@@ -1122,176 +1252,36 @@ main{padding:48px 0 55px}.main-grid{display:grid;grid-template-columns:minmax(0,
                     storedTracking.gclid ||
                     sourceValue.includes("google")
                 ) {
-
                     leadSource = "Google Ads";
-
                 } else if (
                     sourceValue.includes("facebook") ||
                     sourceValue.includes("instagram") ||
                     sourceValue.includes("meta")
                 ) {
-
                     leadSource = "Meta Ads";
-
                 } else if (storedTracking.utm_source) {
-
-                    leadSource =
-                        storedTracking.utm_source;
-
+                    leadSource = storedTracking.utm_source;
                 }
-
-
-                const leadData = {
-
-                    leadId: leadId,
-
-                    timestamp:
-                        new Date().toISOString(),
-
-                    name: name,
-
-                    phone: phone,
-
-                    city: city,
-
-                    carModel: "",
-
-                    services:
-                        services.join(", "),
-
-                    package: "",
-
-                    additionalDetails:
-                        message,
-
-                    contactPreference:
-                        "WhatsApp",
-
-                    source:
-                        leadSource,
-
-                    campaign:
-                        storedTracking.utm_campaign || "",
-
-                    adCreative:
-                        storedTracking.utm_content || "",
-
-                    gclid:
-                        storedTracking.gclid || "",
-
-                    landingPage:
-                        storedTracking.landingPage ||
-                        window.location.href,
-
-                    formStarted:
-                        formStartedAt ||
-                        new Date().toISOString(),
-
-                    formSubmitted:
-                        "Yes",
-
-                    whatsappOpened:
-                        "Yes",
-
-                    callClicked:
-                        "No",
-
-                    locationClicked:
-                        "No"
-
-                };
-
-
-                /* =============================================
-                   SEND LEAD TO GOOGLE SHEET
-
-                   text/plain avoids a browser CORS preflight.
-                   Apps Script reads the JSON body from
-                   e.postData.contents.
-                ============================================== */
-
-                try {
-
-                    fetch(
-                        LEAD_API_URL,
-                        {
-                            method: "POST",
-                            mode: "no-cors",
-                            headers: {
-                                "Content-Type":
-                                    "text/plain;charset=utf-8"
-                            },
-                            body:
-                                JSON.stringify(leadData),
-                            keepalive: true
-                        }
-                    ).catch(
-                        function (error) {
-
-                            console.error(
-                                "Google Sheet submission failed:",
-                                error
-                            );
-
-                        }
-                    );
-
-                } catch (error) {
-
-                    console.error(
-                        "Google Sheet submission failed:",
-                        error
-                    );
-
-                }
-
-
-                /* =============================================
-                   GOOGLE ANALYTICS — PRIMARY LEAD
-                ============================================== */
 
                 if (typeof gtag === "function") {
 
-                    gtag(
-                        "event",
-                        "form_submit",
-                        {
-                            lead_id:
-                                leadId,
+                    gtag("event", "form_submit", {
+                        lead_id: leadId,
+                        lead_source: leadSource,
+                        campaign:
+                            storedTracking.utm_campaign || "",
+                        page_location:
+                            window.location.href
+                    });
 
-                            lead_source:
-                                leadSource,
-
-                            campaign:
-                                storedTracking.utm_campaign || "",
-
-                            page_location:
-                                window.location.href
-                        }
-                    );
-
-                    gtag(
-                        "event",
-                        "generate_lead",
-                        {
-                            lead_id:
-                                leadId,
-
-                            value: 1,
-
-                            currency: "INR"
-                        }
-                    );
-
+                    gtag("event", "generate_lead", {
+                        lead_id: leadId,
+                        value: 1,
+                        currency: "INR"
+                    });
                 }
 
-
-
-                /* =============================================
-                   WHATSAPP MESSAGE
-                ============================================== */
-
-                let whatsappMessage =
+                const whatsappMessage =
 `Hello Auto Help,
 
 I would like to enquire about your services.
@@ -1303,46 +1293,15 @@ Phone: ${phone}
 City: ${city}
 
 Interested in:
-${services
-    .map(
-        function (service) {
-
-            return "• " + service;
-
-        }
-    )
-    .join("\n")}
+${services.map(function (service) {
+    return "• " + service;
+}).join("\n")}
 
 Requirement:
 ${message || "Not specified"}`;
 
-
-
-                /* =============================================
-                   GOOGLE ADS / CAMPAIGN ATTRIBUTION
-
-                   Tracking parameters are retained locally for
-                   analytics only. They are NOT used to change the
-                   landing page, content, destination, or behaviour
-                   shown to Google visitors.
-                ============================================== */
-
-
-
-                /* =============================================
-                   ENCODE MESSAGE
-                ============================================== */
-
                 const encodedMessage =
-                    encodeURIComponent(
-                        whatsappMessage
-                    );
-
-
-
-                /* =============================================
-                   WHATSAPP URL
-                ============================================== */
+                    encodeURIComponent(whatsappMessage);
 
                 const whatsappURL =
                     "https://wa.me/" +
@@ -1350,35 +1309,16 @@ ${message || "Not specified"}`;
                     "?text=" +
                     encodedMessage;
 
-
-
-                /* =============================================
-                   TRACK LEAD CLICK
-                ============================================== */
-
-                trackAction(
-                    "lead_whatsapp"
-                );
-
-                trackAction(
-                    "whatsapp_opened"
-                );
-
-
-
-                /* =============================================
-                   OPEN WHATSAPP
-                ============================================== */
+                trackAction("lead_whatsapp");
+                trackAction("whatsapp_opened");
 
                 window.open(
                     whatsappURL,
                     "_blank",
                     "noopener,noreferrer"
                 );
-
             }
         );
-
 
 
     /* =========================================================
